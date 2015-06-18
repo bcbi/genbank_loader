@@ -86,7 +86,7 @@ Each of these files is associated with a corresponding table in the target datab
 
 GenBank Loader is a multi-threaded process that can leverage the cores of your CPU to download and prepare GenBank files in parallel, which can dramatically improve performance.
 
-When GenBank Loader executes its `prepare` function, it determines how much memory it has been allocated, and creates as many threads as it can safely use without negatively impacting other user and system processes.  GenBank Loader will use at least one core, but may use up to ( _N_ - 2 ) cores, where _N_ is the total number of cores in your system's CPU.
+When GenBank Loader executes its `prepare` function, it determines how much memory it has been allocated, and creates as many threads as it can safely use without negatively impacting other user and system processes.  GenBank Loader will use at least one core, but may use up to (_N_-2) cores, where _N_ is the total number of cores in your system's CPU.
 
 GenBank Loader's preparation stage requires **400 megabytes of Java heap memory per thread** to properly execute, and may otherwise suffer severely degraded performance, or even fail with an `OutOfMemoryError`.  It is therefore suggested to allocate _at least 2.5 times_ the required memory per thread to the JVM, but more is better and will translate to improved performance, especially on systems with many CPU cores.
 
@@ -104,7 +104,7 @@ To load the prepared GenBank files into the local database, execute the followin
     Copyright 2015 The University of Vermont and State Agricultural College.  All rights reserved.
     
     INFO  Load - process started at Wed Jun 17 16:55:32 EDT 2015
-    INFO  AbstractLoader - populating database from ./out' -
+    INFO  AbstractLoader - populating database from './out' -
     INFO  AbstractLoader -  loading './out/basic.txt' into table 'basic'
     INFO  DataSource - getConnection : establishing connection to 'genbank'
     INFO  AbstractLoader -  building indexes for table 'basic'
