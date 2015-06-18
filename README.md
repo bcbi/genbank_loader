@@ -10,15 +10,9 @@ Building the GenBank Loader is accomplished by running the following from the pr
 
 ### Preparation ###
 
-Three preparatory steps must be taken before GenBank Loader may be used.  These are obtaining a lease from NLM to access GenBank data, creating the local database into which GenBank data will be ultimately stored, and ensuring your system has sufficient disk space available to store everything.
+Two preparatory steps must be taken before GenBank Loader may be used.  These are creating the local database into which GenBank data will be ultimately stored, and ensuring your system has sufficient disk space available to store everything.
 
-#### 1. Obtaining a GenBank Lease from NLM ####
-
-In order for the GenBank Loader to download data files, you must first obtain a GenBank lease from NLM.  These leases are tied to IP addresses.
-
-See [this NLM page on Leasing Journal Citations](http://www.nlm.nih.gov/databases/journal.html) for details on how to obtain a GenBank lease.
-
-#### 2. Create Local Database ####
+#### 1. Create Local Database ####
 
 Before the GenBank Loader can be used, the database into which GenBank citations and associated records will be stored must be created.  GenBank Loader is pre-configured to use MySQL as its database back-end.  If you don't already have it installed, you should first download and install the [MySQL Community Server](https://dev.mysql.com/downloads/mysql/).
 
@@ -28,7 +22,7 @@ Once MySQL is installed, run the following command from the project's base direc
 
 This will create the _genbank_ database, with appropriate default values to integrate with the GenBank Loader's default settings.
 
-#### 3. Ensure You Have Sufficient Free Disk Space ####
+#### 2. Ensure You Have Sufficient Free Disk Space ####
 
 The GenBank Loader's intermediate files and target database tables can take _hundreds of gigabytes_ of disk space.  Please be sure that you have at least **500 gigabytes** of disk space available before starting this process!
 
