@@ -1,6 +1,6 @@
 # GenBank Loader #
 
-GenBank Loader is a Java-based command-line utility that may be used to download the latest GenBank data from the [National Center for Biotechnology Information](http://www.ncbi.nlm.nih.gov/), and to load those citations into a local relational database to facilitate advanced analysis. 
+GenBank Loader is a Java-based command-line utility that may be used to download the latest [GenBank](http://www.ncbi.nlm.nih.gov/genbank/) data from the [National Center for Biotechnology Information](http://www.ncbi.nlm.nih.gov/), and to load those publicly available DNA sequences into a local relational database to facilitate advanced analysis. 
 
 ### Building GenBank Loader ###
 
@@ -14,7 +14,7 @@ Two preparatory steps must be taken before GenBank Loader may be used.  These ar
 
 #### 1. Create Local Database ####
 
-Before the GenBank Loader can be used, the database into which GenBank citations and associated records will be stored must be created.  GenBank Loader is pre-configured to use MySQL as its database back-end.  If you don't already have it installed, you should first download and install the [MySQL Community Server](https://dev.mysql.com/downloads/mysql/).
+Before the GenBank Loader can be used, the database into which GenBank DNA sequences will be stored must be created.  GenBank Loader is pre-configured to use MySQL as its database back-end.  If you don't already have it installed, you should first download and install the [MySQL Community Server](https://dev.mysql.com/downloads/mysql/).
 
 Once MySQL is installed, run the following command from the project's base directory:
 
