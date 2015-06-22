@@ -2,17 +2,17 @@
 
 GenBank Loader is a Java-based command-line utility that may be used to download the latest [GenBank](http://www.ncbi.nlm.nih.gov/genbank/) data from the [National Center for Biotechnology Information](http://www.ncbi.nlm.nih.gov/), and to load those publicly available DNA sequences into a local relational database to facilitate advanced analysis. 
 
-### Building GenBank Loader ###
+## Building GenBank Loader ##
 
 Building the GenBank Loader is accomplished by running the following from the project's base directory:
 
     $ mvn package
 
-### Preparation ###
+## Preparation ##
 
 Two preparatory steps must be taken before GenBank Loader may be used.  These are creating the local database into which GenBank data will be ultimately stored, and ensuring your system has sufficient disk space available to store everything.
 
-#### 1. Create Local Database ####
+### 1. Create Local Database ###
 
 Before the GenBank Loader can be used, the database into which GenBank DNA sequences will be stored must be created.  GenBank Loader is pre-configured to use MySQL as its database back-end.  If you don't already have it installed, you should first download and install the [MySQL Community Server](https://dev.mysql.com/downloads/mysql/).
 
@@ -22,11 +22,11 @@ Once MySQL is installed, run the following command from the project's base direc
 
 This will create the _genbank_ database, with appropriate default values to integrate with the GenBank Loader's default settings.
 
-#### 2. Ensure You Have Sufficient Free Disk Space ####
+### 2. Ensure You Have Sufficient Free Disk Space ###
 
 The GenBank Loader's intermediate files and target database tables can take _hundreds of gigabytes_ of disk space.  Please be sure that you have at least **500 gigabytes** of disk space available before starting this process!
 
-### Usage ###
+## Usage ##
 
 To use the GenBank Loader and to see a list of command-line switches, run the program without any arguments:
 
@@ -43,7 +43,7 @@ To use the GenBank Loader and to see a list of command-line switches, run the pr
         --prepare         only prepare database files for import
      -u,--user <string>   the database user name (default 'genbank')
 
-#### 1. Prepare GenBank Files For Import ####
+### 1. Prepare GenBank Files For Import ###
 
 The GenBank Loader has two primary modes of operation: `prepare` and `load`.  The preparation stage involves downloading GenBank files and transforming them such that they may be loaded into the target database.  The loading stage involves taking those prepared files and importing them into the target database.
  
@@ -68,6 +68,14 @@ To download and prepare files for import, run the following command:
     INFO  AbstractFTPLoader - [1]  (3/3749, 0%)  processing 'gbbct100.seq.gz'
     INFO  AbstractFTPLoader - [2]  (4/3749, 0%)  processing 'gbbct101.seq.gz'
     ...
+    INFO  AbstractFTPLoader - [2]  (3748/3749, 99%)  processing 'complete.999.genomic.gbff.gz'
+    INFO  AbstractFTPLoader - [1]  (3749/3749, 100%)  processing 'complete.wgs_mstr.gbff.gz'
+    INFO  AbstractFTPLoader - [1]  done.
+    INFO  FTPClient - disconnected from 'ftp.ncbi.nlm.nih.gov'
+    INFO  AbstractFTPLoader - [2]  done.
+    INFO  FTPClient - disconnected from 'ftp.ncbi.nlm.nih.gov'
+    INFO  AbstractLoader - processing 3749 files across 2 threads took 13 hours, 24 minutes, 19 seconds
+    INFO  Load - preparing GenBank files finished at Thu Jun 18 23:33:54 EDT 2015 (took 13 hours, 24 minutes, 23 seconds).
 
 Downloaded files will be stored in a temporary folder while they are being processed, and are deleted after processing is completed.  Resultant files that will be imported into the local database are stored in the _out_ folder in the current working directory:
 
@@ -76,7 +84,15 @@ Downloaded files will be stored in a temporary folder while they are being proce
 
 Each of these files is associated with a corresponding table in the target database.
 
-##### Important Note Regarding Memory and Performance #####
+#### Prepare Stage is Resumable ####
+
+During the preparation stage, thousands of files are downloaded over potentially many hours.  It is possible that during this time, the process might be interrupted (perhaps by an `OutOfMemoryError`, lost network connection, user error, etc.).  Should any such interruption occur, it is important to know that the download and processing of data files may be resumed where it left off with an extremely remote chance of data corruption.
+
+This is because metadata is generated about each successfully processed file (allowing the system to know where to resume operations), and because data generated from each downloaded file is processed independently, the results from which are appended to the master target files for database import only after all individual file processing has completed.
+
+Corruption of the master files can occur **only** if the GenBank Loader is interrupted during the few milliseconds required to append individual file's data to its respective master file.  This is extremely unlikely to occur, as while the processing of an individual file may take many seconds, appending those data to the master file takes just a few milliseconds.
+
+#### Important Note Regarding Memory and Performance ####
 
 GenBank Loader is a multi-threaded process that can leverage the cores of your CPU to download and prepare GenBank files in parallel, which can dramatically improve performance.
 
@@ -88,7 +104,7 @@ To allocate the minimum suggested memory to the GenBank Loader process, use the 
  
 See [Oracle's Java SE Documentation](http://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html) for details about `-Xmx` and other JVM options.
 
-#### 2. Load Prepared Files Into Local Database ####
+### 2. Load Prepared Files Into Local Database ###
 
 To load the prepared GenBank files into the local database, execute the following:
 
@@ -112,12 +128,12 @@ To load the prepared GenBank files into the local database, execute the followin
     INFO  AbstractLoader -  building indexes for table 'authors'
     INFO  AbstractLoader -  loading './out/annotations.txt' into table 'annotations'
     INFO  AbstractLoader -  building indexes for table 'annotations'
-    INFO  AbstractLoader - finished populating database.  took 10 seconds
-    INFO  Load - populating database with release '207' finished at Wed Jun 17 16:55:44 EDT 2015 (took 11 seconds).
+    INFO  AbstractLoader - finished populating database.  took 12 hours, 6 minutes, 59 seconds
+    INFO  Load - populating database with release '207' finished at Thu Jun 18 05:02:35 EDT 2015 (took 12 hours, 7 minutes, 3 seconds).
 
 Note that as soon as the `load` process completes, you may safely delete intermediate database import files in the _out_ folder.
 
-### License and Copyright ###
+## License and Copyright ##
 
 GenBank Loader is Copyright 2015 [The University of Vermont and State Agricultural College](https://www.uvm.edu/).  All rights reserved.
 
