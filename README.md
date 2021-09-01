@@ -48,7 +48,7 @@ To use the GenBank Loader and to see a list of command-line switches, run the pr
         --prepare         only prepare database files for import
      -u,--user <string>   the database user name (default 'genbank')
 
-## 1. Prepare GenBank Files For Import ##
+## 3. Prepare GenBank Files For Import ##
 
 The GenBank Loader has two primary modes of operation: `prepare` and `load`.  The preparation stage involves downloading GenBank files and transforming them such that they may be loaded into the target database.  The loading stage involves taking those prepared files and importing them into the target database.
  
@@ -89,13 +89,12 @@ Downloaded files will be stored in a temporary folder while they are being proce
 
 Each of these files is associated with a corresponding table in the target database.
 
-### Running Prepare on Oscar ###
+## Running Prepare on Oscar ##
 
-Batch jobs:
+#### Batch Job Command:
 
 I ran the Prepare and Load steps through batch jobs on Oscar, which allowed them to run in the background and not take up much time. I used a time maximum of 100 hours and then the given command for prepare or load. 
 
-Command: 
 ```
 Java -jar target/genbank-loader-1.0.jar —prepare
 ```
@@ -133,7 +132,7 @@ To allocate the minimum suggested memory to the GenBank Loader process, use the 
  
 See [Oracle's Java SE Documentation](http://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html) for details about `-Xmx` and other JVM options.
 
-### 2. Load Prepared Files Into Local Database ###
+## 4. Load Prepared Files Into Local Database ##
 
 To load the prepared GenBank files into the local database, execute the following:
 
@@ -162,7 +161,7 @@ To load the prepared GenBank files into the local database, execute the followin
 
 Note that as soon as the `load` process completes, you may safely delete intermediate database import files in the _out_ folder.
 
-### Load in Oscar ###
+## Load in Oscar ##
 
 Load required a few more changes for me particularly to get this process working. The main issue is that the current set of code in GenBank loader relies on a set of background scripts by UVM that I was able to get access to in order to change some of them. 
 Link: https://bitbucket.org/UVM-BIRD/ccts-common/src/master/
@@ -188,7 +187,7 @@ DBUtil.executeUpdate("set session sql_log_bin = ON", dataSource);
 - However, this requires additional permission for the “drop” command from the DB team
 - Once you have gotten permissions, use truncate on the command line and not in the script as I had some issues with that and allows the manual operations used later on to add onto pre existing tables with data
 
-Batch job Command: 
+#### Batch job Command: 
 ```
 java -jar target/genbank-loader-1.0.jar --load -h pursamydbcit.services.brown.edu -u vramanan -p <password>
 ```
@@ -210,18 +209,23 @@ Split -a 1 -l 700,000,000 annotations.txt annotations
 Apply same logic to authors
 
 Once split, make sure to *not* truncate authors and annotations as you are adding on each individual file to the previously loaded table
+
+#### Flowchart for Updating Authors and Annotations
 I made a flowchart so I could quickly go through the motions for each manual update: 
 1. Rm <previousfile>
 2. Mv <nextfile> <nextfile.txt> 
 3. Adds “.txt” extension
 4. Update FeatureTableParser.java with new name of file
   - src/main/java/edu/uvm/ccts/genbank/FeatureTableParser.java
-5. Comment out the defining variables of the files you don’t need
-6. Change the name of the annotations or authors file you are using with, for example “authorsa.txt” (a is first file of the 5, followed by bcde)
-7. Maven package
-8. Update the batch file script
-9, Run script
-  
+5. Remove "truncate" or "delete" from AbstractLoader.java in dbLoad
+6. Comment out the defining variables of the files you don’t need
+7. Change the name of the annotations or authors file you are using with, for example “authorsa.txt” (a is first file of the 5, followed by bcde)
+8. Maven package
+9. Update the batch file script
+10. Run script
+
+#### Checking MySQL for Updates ####
+    
 Use the following command to check the row count of the tables to see the updates as you’re going allowing: 
 ```
 Select table_rows "Rows Count" from information_schema.tables where table_name="annotations" and table_schema="genbank";
