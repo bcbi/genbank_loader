@@ -99,14 +99,17 @@ I ran the Prepare and Load steps through batch jobs on Oscar, which allowed them
 Java -jar target/genbank-loader-1.0.jar —prepare
 ```
 #### Changes to Pom.XML: 
+- This file holds information on Maven, MySQL, and the Oracle MySQL connection
 - Change version to 8.0.21
 - Added the following repository section to the end of the Pom.XML for Oscar specifically (pom_Oscar.xml) 
 
 #### Changes to Load.java: src/main/java/edu/uvm/ccts/genbank/Load.java
+- This holds information on the links to download and access the MySQL database
 - private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"
 - Added "?serverTimezone=UTC&allowLoadLocalInfile=true" to the String url JDBC
 
 #### Changes to Record.java: src/main/java/edu/uvm/ccts/genbank/model/Record.java
+- This file goes through the individual Genbank records and processes them into files
 - Changed populateGInumber to [0] because there is no index 1 anymore
 - This change is due to GenBank changing their data organization 
 
@@ -175,13 +178,15 @@ In particular, the DB folder within src/ is the scripts that I was able to edit 
 - Initialize the following files in loader with “package edu.uvm.ccts.genbank.db.loader;”
   - Loader/AbstractFileLoader.java
   - Loader/AbstractFTPLoader.java
-  - Loader/AbstractLoader.java
+  - Loader/AbstractLoader.java: This code has the MySQL commands that loads the data
 - In AbstractLoader.java, update dbLoad (line 94) by removing the alter statements starting with DBUtil.executeUpdate
 ```
 DBUtil.executeUpdate("set session sql_log_bin = OFF", dataSource); 
 DBUtil.executeUpdate("load data local infile '" + filename + "' into table " + table, dataSource);
 DBUtil.executeUpdate("set session sql_log_bin = ON", dataSource);
 ```
+- FeatureTableParser.java holds the variable names for each of the files to be processed - if you want to remove one or change a filename, do so here
+
 #### Changes to overall process: 
 - Use truncate from MySQL command line to clean out the data tables you are going to update
 - However, this requires additional permission for the “drop” command from the DB team
@@ -216,7 +221,6 @@ I made a flowchart so I could quickly go through the motions for each manual upd
 2. Mv <nextfile> <nextfile.txt> 
 3. Adds “.txt” extension
 4. Update FeatureTableParser.java with new name of file
-  - src/main/java/edu/uvm/ccts/genbank/FeatureTableParser.java
 5. Remove "truncate" or "delete" from AbstractLoader.java in dbLoad
 6. Comment out the defining variables of the files you don’t need
 7. Change the name of the annotations or authors file you are using with, for example “authorsa.txt” (a is first file of the 5, followed by bcde)
