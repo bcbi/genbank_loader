@@ -2,6 +2,8 @@
 
 GenBank Loader is a Java-based command-line utility that may be used to download the latest [GenBank](http://www.ncbi.nlm.nih.gov/genbank/) data from the [National Center for Biotechnology Information](http://www.ncbi.nlm.nih.gov/), and to load those publicly available DNA sequences into a local relational database to facilitate advanced analysis. 
 
+[ORIGINAL CODE HERE, written by Matthew Storer](https://bitbucket.org/UVM-BIRD/genbank-loader/src/master/)
+
 This is an updated version, edited by Vivek Ramanan in 2021, for the Brown Center of Biomedical Informatics (BCBI). 
 I have added comments with ** before them so they hopefully make running the process easier. 
 
